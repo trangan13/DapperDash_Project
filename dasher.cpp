@@ -21,6 +21,12 @@ int main()
     int posY {WindowHeight - height};
     int velocity {0}; //pixels/frame
 
+    // is the rectangle in the air?
+    bool isInAir {posY != WindowHeight - height};
+
+    //jump velocity
+    const int jumpVel{-22};
+
      //Target Frames per second
     SetTargetFPS(60);
 
@@ -39,18 +45,20 @@ int main()
     {
     // Rectangle is on the ground
     velocity = 0;
+    isInAir = false;
     }
     else
     {
     // Rectangle is in the air
     velocity += gravity;
+    isInAir = true;
     }
 
     
     // Button Actions
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyPressed(KEY_SPACE) && !isInAir)
     {
-        velocity -= 10;
+        velocity += jumpVel;
     }
     
 
