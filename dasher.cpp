@@ -31,7 +31,7 @@ int main()
     //nebulaPos.y = WindowHeight - nebulaRec.height;
     
     // Nebula x velocity (pixels/second)
-    int nebVel{-600}; //
+    int nebVel{-200}; //
     
 
     // Scarfy variables
@@ -45,11 +45,17 @@ int main()
     scarfyPos.x = WindowWidth/2 - scarfyRec.width/2;
     scarfyPos.y = WindowHeight - scarfyRec.height;
 
-    // frame animation
+    // Scarfy frame animation
     int frame {0};
-    // Amount of time before we update the animation frame
+    // Scarfy Amount of time before we update the animation frame
     const float updateTime{1.0/12.0};
     float runningTime {};
+
+    // nebula frame animation 
+    int nebFrame {0};
+    // nebula update time
+    const float nebUpdateTime {1.0/12.0};
+    float nebRunningTime {};
     
     // Set Velocity
     int velocity {0}; //pixels/frame
@@ -105,13 +111,14 @@ int main()
 
         // Update Runnning Time - This works as a timer, everytime running time reaches 12th of a second, 
         // we update the frame but also restart the time. 
+        // Scarfy
        if(!isInAir)
        { 
         runningTime += dt;
         if (runningTime >= updateTime)
         {
             runningTime = 0.0;
-            // Update Animation Rec
+            // Update Scarfy Animation Rec
             scarfyRec.x = frame*scarfyRec.width;
             frame++; 
             if (frame > 5)
@@ -120,6 +127,20 @@ int main()
             }
         }
        }
+       // Nebula running Time - For animation
+       nebRunningTime += dt;
+       if (nebRunningTime >= nebUpdateTime)
+       {
+            nebRunningTime = 0.0;
+            // Update Nebula Animation Rec
+            nebRec.x = nebFrame*nebRec.width;
+            nebFrame++;
+            if (nebFrame > 7)
+            {
+                nebFrame = 0;
+            }
+       }
+       
        
       
         
