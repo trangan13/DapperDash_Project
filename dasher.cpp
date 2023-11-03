@@ -12,13 +12,13 @@ struct AnimData
 
 int main()
 {
-
-    // Constant dimensions
-    const int WindowWidth {512};
-    const int WindowHeight {380};
+    // Create an array
+    float windowDimensions[2];
+    windowDimensions[0] = 512;
+    windowDimensions[1] = 380;
 
     // Initialize window
-    InitWindow(WindowWidth, WindowHeight, "Dapper Dasher!");
+    InitWindow(windowDimensions[0], windowDimensions[1], "Dapper Dasher!");
 
     // Gravity
     const int gravity {1'000}; // (pixels/s)/s
@@ -29,7 +29,7 @@ int main()
     // Anim data for nebula
     AnimData nebData{
         {0.0, 0.0, nebula.width/8, nebula.height/8}, // Rectangle rec
-        {WindowWidth, WindowHeight - nebula.height/8},  // Vector2 pos
+        {windowDimensions[0], windowDimensions[1] - nebula.height/8},  // Vector2 pos
         0, // int frame
         1.0/12.0,  // float update Time
         0.0 // float running Time
@@ -39,7 +39,7 @@ int main()
     // Anim data for nebula 2
     AnimData neb2Data{
         {0.0, 0.0, nebula.width/8, nebula.height/8},
-        {WindowWidth + 300, WindowHeight - nebula.height/8},
+        {windowDimensions[0] + 300, windowDimensions[1] - nebula.height/8},
         0, // in frame 
         1.0/16.0, // float update time
         0.0 // float running time
@@ -57,8 +57,8 @@ int main()
     scarfyData.rec.height = scarfy.height;
     scarfyData.rec.x = 0;
     scarfyData.rec.y = 0;
-    scarfyData.pos.x = WindowWidth/2 - scarfyData.rec.width/2;
-    scarfyData.pos.y = WindowHeight - scarfyData.rec.height;
+    scarfyData.pos.x = windowDimensions[0]/2 - scarfyData.rec.width/2;
+    scarfyData.pos.y = windowDimensions[1] - scarfyData.rec.height;
     scarfyData.frame = 0; 
     scarfyData.runningTime = 0.0;
     scarfyData.updateTime = 1.0/12.0;
@@ -89,7 +89,7 @@ int main()
         ClearBackground(WHITE);
     
         // Ground check
-        if (scarfyData.pos.y >= WindowHeight - scarfyData.rec.height)
+        if (scarfyData.pos.y >= windowDimensions[1] - scarfyData.rec.height)
         {
             // Rectangle is on the ground
             velocity = 0;
