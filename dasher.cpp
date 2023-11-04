@@ -50,7 +50,7 @@ int main()
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
 
    
-   const int sizeOfNebulae{6};
+   const int sizeOfNebulae{3};
     // Array of 
     AnimData nebulae[sizeOfNebulae]{};
  
@@ -67,9 +67,13 @@ int main()
         nebulae[i].pos.x = windowDimensions[0] + i * 300;
     }
 
+    // finish line
+    float finishLine{ nebulae[sizeOfNebulae-1].pos.x };
 
     // Nebula animation variables
     int nebVel {-200};
+
+    
 
  
     // Scarfy variables
@@ -95,7 +99,15 @@ int main()
     // background image
     Texture2D background = LoadTexture("textures/far-buildings.png");
     float bgX{};
-    
+    // midground texture
+    Texture2D midground = LoadTexture("textures/back-buildings.png");
+    float mgX{};
+    // foreground texture
+    Texture2D foreground = LoadTexture("textures/foreground.png");
+    float fgX{};
+
+    bool collision {};
+
      //Target Frames per second
     SetTargetFPS(60);
 
@@ -117,13 +129,37 @@ int main()
         bgX -= 20 * dt;
         if (bgX <= -background.width*2)
         {
-            bgX = 0;
+            bgX = 0.0;
         }
+        
+        mgX -= 40 * dt;
+        // scroll the midground
+        if (mgX <= -midground.width*2)
+        {
+            mgX = 0.0;
+        }
+        // scroll the foreground
+        fgX -= 80 * dt;
+        if (fgX <= -foreground.width*2)
+        {
+            fgX = 0.0;
+        }
+
         //draw background
         Vector2 bg1Pos{bgX, 0.0};
         DrawTextureEx(background, bg1Pos, 0.0, 2.0, WHITE);
         Vector2 bg2Pos{bgX + background.width*2, 0.0}; 
         DrawTextureEx(background, bg2Pos, 0.0, 2.0, WHITE);
+        // draw midground
+        Vector2 mg1Pos{mgX, 0.0};
+        DrawTextureEx (midground, mg1Pos, 0.0, 2.0, WHITE);
+        Vector2 mg2Pos{mgX + midground.width*2, 0.0};
+        DrawTextureEx (midground, mg2Pos, 0.0, 2.0, WHITE);
+        // draw foreground
+        Vector2 fg1Pos{fgX, 0.0};
+        DrawTextureEx (foreground, fg1Pos, 0.0, 2.0, WHITE);
+        Vector2 fg2Pos{fgX + foreground.width*2, 0.0};
+        DrawTextureEx (foreground, fg2Pos, 0.0, 2.0, WHITE);
         
         // Ground check
         if (isOnGround(scarfyData, windowDimensions[1]))
@@ -152,6 +188,8 @@ int main()
             nebulae[i].pos.x += nebVel * dt;
         }
         
+        // update finish line
+        finishLine += nebVel * dt;
 
         // update scarfy position
         scarfyData.pos.y += velocity * dt;
@@ -164,22 +202,57 @@ int main()
             scarfyData = updateAnimData (scarfyData, dt, 5);
        }
 
-            
- 
-        for (int i = 0; i < sizeOfNebulae; i++)
+        
+        for(AnimData nebula : nebulae)
         {
-           nebulae[i] = updateAnimData (nebulae[i], dt, 7); 
-           
-            // Draw each nebulae
-            DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+            float pad{50};
+            Rectangle nebRec{
+                nebula.pos.x + pad,
+                nebula.pos.y + pad,
+                nebula.rec.width - 2*pad,
+                nebula.rec.height - 2*pad
+            };
+            Rectangle scarfyRec {
+                scarfyData.pos.x,
+                scarfyData.pos.y,
+                scarfyData.rec.width,
+                scarfyData.rec.height,
+            };
+            if (CheckCollisionRecs(nebRec, scarfyRec))
+            {
+                collision = true;
+            }
         }
+
         
 
-        // Draw Scarfy
-        DrawTextureRec(scarfy, scarfyData.rec, scarfyData.pos, WHITE);
+        if(collision)
+            {
+            DrawText( "Game Over", windowDimensions[0]/4, windowDimensions[1]/2, 50, RED);
+            }
+        else if (scarfyData.pos.x >= finishLine) 
+            {
         
-        // Stop Drawing
-        EndDrawing();
+                DrawText( "You win!", windowDimensions[1]/2, windowDimensions[2]/2, 60, RED);
+            }
+        else
+            { for (int i = 0; i < sizeOfNebulae; i++)
+            {
+            nebulae[i] = updateAnimData (nebulae[i], dt, 7); 
+            
+                      
+            // Draw each nebulae
+            DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+            }
+            // Draw Scarfy
+            DrawTextureRec(scarfy, scarfyData.rec, scarfyData.pos, WHITE);
+
+             }
+        
+
+         // Stop Drawing
+            EndDrawing();
+      
         
         
         }
@@ -187,6 +260,8 @@ int main()
     UnloadTexture(scarfy);
     UnloadTexture(nebula);
     UnloadTexture(background);
+    UnloadTexture(midground);
+    UnloadTexture(foreground);
     CloseWindow();
 
 }
